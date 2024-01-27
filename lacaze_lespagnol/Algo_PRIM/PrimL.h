@@ -5,22 +5,11 @@
 #ifndef LACAZE_LESPAGNOL_PRIML_H
 #define LACAZE_LESPAGNOL_PRIML_H
 
+#include "Sommet.h"
 
 class PrimL {
-    struct Sommet {
-        int numero;
-        struct Couple {
-            int adjacent;
-            int cost; 
-        };
-
-    };
-
     int head;
-    Suite liste_ajacentes;
-    const int tail = 0;
-
-
+    Sommet liste_ajacentes;
 
 };
 
