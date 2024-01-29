@@ -12,7 +12,6 @@ private:
     private:
         int adjacent;
         int cost;
-        //ptetre le mettre dans Sommet à voir
         Couple *next;
     public:
         Couple(int &adj, int &c) : adjacent(adj), cost(c), next(nullptr) {}
@@ -20,7 +19,6 @@ private:
         int getCost() const;
         Couple getNext() const;
         void addNext(int &, int &);
-        bool isNull();
 
         ~Couple();
     };
@@ -32,7 +30,6 @@ public:
     Sommet(int &num) : numero(num), voisins(nullptr) {};
     int getNumero() const;
     Couple getVoisins() const;
-    bool isEnd() const;
 
     ~Sommet();
 };
