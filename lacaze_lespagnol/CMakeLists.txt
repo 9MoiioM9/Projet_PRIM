@@ -9,4 +9,6 @@ add_executable(lacaze_lespagnol main.cpp
         Algo_PRIM/PrimM.cpp
         Algo_PRIM/PrimM.h
         Algo_PRIM/Sommet.cpp
-        Algo_PRIM/Sommet.h)
+        Algo_PRIM/Sommet.h
+        Algo_PRIM/ArbreRecouvr.cpp
+        Algo_PRIM/ArbreRecouvr.h)
