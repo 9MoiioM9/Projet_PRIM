@@ -13,7 +13,7 @@ int Sommet::Couple::getCost() const {
     return cost;
 }
 
-Sommet::Couple Sommet::Couple::getNext() const {
+Sommet::Couple& Sommet::Couple::getNext() {
     return *next;
 }
 
@@ -36,7 +36,7 @@ int Sommet::getNumero() const {
     return numero;
 }
 
-Sommet::Couple Sommet::getVoisins() const {
+Sommet::Couple& Sommet::getVoisins() {
     return *voisins;
 }
 

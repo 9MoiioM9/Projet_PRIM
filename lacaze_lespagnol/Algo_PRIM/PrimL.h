@@ -23,6 +23,7 @@ private:
     void enregistrerListeAdjacence();
     void afficherResult();
     bool isConnexe();
+    void isConnexe_Aux(int sommet,bool *connexe);
 
 public:
     PrimL(std::string input, int sommet);

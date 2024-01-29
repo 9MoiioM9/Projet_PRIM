@@ -56,8 +56,32 @@ void PrimL::enregistrerListeAdjacence() {
     this->afficherResult();
 }
 
+void PrimL::isConnexe_Aux(int sommet, bool *connexe) {
+    //On récupère le numéro du premier adjacent
+    Sommet::Couple *v = &liste_ajacentes[sommet-1].getVoisins();
+    while(v != nullptr){
+        connexe[v->getAdjacent()->getNumero()-1] = true;
+        isConnexe_Aux(v->getAdjacent()->getNumero()-1, connexe);
+        v = &v->getNext();
+    }
+}
+
 bool PrimL::isConnexe() {
-    return false;
+    bool connexe[nb_sommet];
+    for (int i = 0; i < nb_sommet; ++i) {
+        connexe[i]=false;
+    }
+    connexe[sommet-1] = true;
+
+    isConnexe_Aux(sommet,connexe);
+
+    bool found = false;
+    for (int i = 0; i < nb_sommet; ++i) {
+        if(!connexe[i]){
+            found = true;
+        }
+    }
+    return !found;
 }
 
 void PrimL::afficherResult() {
