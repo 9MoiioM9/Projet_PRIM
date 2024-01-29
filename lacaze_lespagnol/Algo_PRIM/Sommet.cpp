@@ -17,31 +17,16 @@ Sommet::Couple Sommet::Couple::getNext() const {
     return *next;
 }
 
-void Sommet::Couple::addNext(int &ajd, int &c) {
-    //TODO pb de pointeur
-    if(isNull()){
-        *next = Couple(ajd, c);
+void Sommet::Couple::addNext(int &adj, int &c) {
+    if(next == nullptr){
+        next = new Couple(adj, c);
     }else{
-        Couple *tmp = next;
-        while(!tmp->isNull()){
-            tmp = tmp->next;
-        }
-        //On arrive à la fin donc tmp == nullptr
-        *tmp = Couple(ajd, c);
+        next->addNext(adj, c);
     }
-}
-
-bool Sommet::Couple::isNull() {
-    return this->next;
 }
 
 Sommet::Couple::~Couple() {
-    while(!next->isNull()){
-        Couple *tmp = next;
-        next = next->next;
-        tmp->next = nullptr;
-        delete tmp;
-    }
+    delete next;
 }
 
 //==========================================================
