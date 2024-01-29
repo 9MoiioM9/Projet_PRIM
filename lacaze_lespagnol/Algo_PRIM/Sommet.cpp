@@ -55,10 +55,6 @@ Sommet::Couple Sommet::getVoisins() const {
     return *voisins;
 }
 
-bool Sommet::isEnd() const {
-    return voisins;
-}
-
 Sommet::~Sommet() {
     delete voisins;
 }

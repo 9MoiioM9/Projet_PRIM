@@ -32,7 +32,6 @@ public:
     Sommet(int &num) : numero(num), voisins(nullptr) {};
     int getNumero() const;
     Couple getVoisins() const;
-    bool isEnd() const;
 
     ~Sommet();
 };
