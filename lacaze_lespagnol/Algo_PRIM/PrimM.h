@@ -29,6 +29,8 @@ private:
     int nbSommet;
 
     void enregistrerMatrice();
+    void afficherResult();
+    bool isConnexe();
 
 public:
     PrimM(std::string input, int sommet);

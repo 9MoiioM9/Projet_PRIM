@@ -2,6 +2,7 @@
 // Created by Moi on 27/01/2024.
 //
 
+#include <iostream>
 #include "PrimM.h"
 
 PrimM::Matrice::Matrice(int nbSommet) : nbSommet(nbSommet){
@@ -44,8 +45,36 @@ void PrimM::enregistrerMatrice() {
     this->nbSommet = std::stoi(nombre);
     matriceAdjacence = new Matrice(nbSommet);
 
-    //TODO remplir la matrice
+    //remplir la matrice
+    for (int i = 0; i < nbSommet; ++i) {
+        input->getline(nombre,INT_MAX,' ');
+        while(true){
+            input->getline(nombre,INT_MAX,' ');
+            if (*nombre == '0'){
+                break;
+            }
+            else{
+                int sommet = std::stoi(nombre);
+                input->getline(nombre,INT_MAX,' ');
+                int poids = std::stoi(nombre);
+                this->matriceAdjacence->set(i+1,sommet,poids);
+            }
+        }
+    }
+    this->input->close();
+    this->afficherResult();
 }
 
-
+void PrimM::afficherResult() {
+    if (this->afficheEcran){
+        if(this->isConnexe()){
+            std::cout << "le graphe est connexe" << std::endl;
+        }else{
+            std::cout << "le graphe n'est pas connexe" << std::endl;
+        }
+        ///TODO faire arbre recouvrant, afficher cout arbre + chaque sommet
+    }else{
+        ///TODO same mais avec this->output
+    }
+}
 
