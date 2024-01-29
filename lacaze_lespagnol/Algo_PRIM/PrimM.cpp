@@ -78,3 +78,31 @@ void PrimM::afficherResult() {
     }
 }
 
+void PrimM::isConnexe_Aux(int sommet,bool *connex) {
+
+    for (int i = 0; i < nbSommet; ++i) {
+        if(matriceAdjacence->get(sommet,i+1)!=0){
+            if(!connex[i]){
+                connex[i] = true;
+                isConnexe_Aux(i+1,connex);
+            }
+        }
+    }
+}
+
+bool PrimM::isConnexe() {
+    bool connex[nbSommet];
+    for (int i = 0; i < nbSommet; ++i) {
+        connex[i]=false;
+    }
+    isConnexe_Aux(sommet,connex);
+
+    bool found = false;
+    for (int i = 0; i < nbSommet; ++i) {
+        if(!connex[i]){
+            found = true;
+        }
+    }
+    return !found;
+}
+

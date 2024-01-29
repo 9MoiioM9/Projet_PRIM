@@ -31,6 +31,7 @@ private:
     void enregistrerMatrice();
     void afficherResult();
     bool isConnexe();
+    void isConnexe_Aux(int sommet,bool *connex);
 
 public:
     PrimM(std::string input, int sommet);
