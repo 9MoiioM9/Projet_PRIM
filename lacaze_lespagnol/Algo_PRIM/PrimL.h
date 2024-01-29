@@ -6,19 +6,27 @@
 #define LACAZE_LESPAGNOL_PRIML_H
 
 #include <string>
+#include <fstream>
 #include "Sommet.h"
 
 class PrimL {
 private:
-    int head;
+    int sommet;
     Sommet *liste_ajacentes;
     int nb_sommet;
+    bool afficheEcran;
     std::ofstream* output;
     std::ifstream* input;
 
+    void addTwoSommets(int, int, int);
+
+    void enregistrerListeAdjacence();
+    void afficherResult();
+    bool isConnexe();
+
 public:
-    //PrimL(std::string input, int sommet);
-    //PrimL(std::string input, int sommet,std::string output);
+    PrimL(std::string input, int sommet);
+    PrimL(std::string input, int sommet,std::string output);
 
 
 };

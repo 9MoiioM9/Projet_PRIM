@@ -5,7 +5,7 @@
 #include "Sommet.h"
 
 //Partie concernant la classe Couple
-int Sommet::Couple::getAdjacent() const {
+Sommet* Sommet::Couple::getAdjacent() const {
     return adjacent;
 }
 
@@ -17,11 +17,11 @@ Sommet::Couple Sommet::Couple::getNext() const {
     return *next;
 }
 
-void Sommet::Couple::addNext(int &adj, int &c) {
+void Sommet::Couple::addSommet(Sommet *adj, int c) {
     if(next == nullptr){
         next = new Couple(adj, c);
     }else{
-        next->addNext(adj, c);
+        next->addSommet(adj, c);
     }
 }
 
@@ -38,6 +38,10 @@ int Sommet::getNumero() const {
 
 Sommet::Couple Sommet::getVoisins() const {
     return *voisins;
+}
+
+void Sommet::setNumero(int num) {
+    this->numero = num;
 }
 
 Sommet::~Sommet() {

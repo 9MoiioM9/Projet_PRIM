@@ -10,15 +10,15 @@ class Sommet {
 private:
     class Couple {
     private:
-        int adjacent;
+        Sommet *adjacent;
         int cost;
         Couple *next;
     public:
-        Couple(int &adj, int &c) : adjacent(adj), cost(c), next(nullptr) {}
-        int getAdjacent() const;
+        Couple(Sommet *adj, int &c) : adjacent(adj), cost(c), next(nullptr) {}
+        Sommet* getAdjacent() const;
         int getCost() const;
         Couple getNext() const;
-        void addNext(int &, int &);
+        void addSommet(Sommet *, int);
 
         ~Couple();
     };
@@ -27,8 +27,10 @@ private:
     Couple *voisins;
 
 public:
-    Sommet(int &num) : numero(num), voisins(nullptr) {};
+    Sommet() {};
+    Sommet(int num) : numero(num), voisins(nullptr) {};
     int getNumero() const;
+    void setNumero(int);
     Couple getVoisins() const;
 
     ~Sommet();
