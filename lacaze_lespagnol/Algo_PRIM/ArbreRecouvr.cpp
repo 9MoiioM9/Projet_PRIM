@@ -26,3 +26,11 @@ void ArbreRecouvr::addVoisin(ArbreRecouvr *voisin) {
     }
 }
 
+void ArbreRecouvr::setSommet(int s) {
+    this->numSommet = s;
+}
+
+ArbreRecouvr::ArbreRecouvr() : numSommet(0),fils(nullptr), voisin(nullptr){
+
+}
+

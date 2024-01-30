@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "PrimM.h"
+#include "ArbreRecouvr.h"
 
 PrimM::Matrice::Matrice(int nbSommet) : nbSommet(nbSommet){
     this->matrice = new int[nbSommet*nbSommet];
@@ -72,6 +73,7 @@ void PrimM::afficherResult() {
         }else{
             std::cout << "le graphe n'est pas connexe" << std::endl;
         }
+        ArbreRecouvr arbre = algoPrim();
         ///TODO faire arbre recouvrant, afficher cout arbre + chaque sommet
     }else{
         ///TODO same mais avec this->output
@@ -95,6 +97,7 @@ bool PrimM::isConnexe() {
     for (int i = 0; i < nbSommet; ++i) {
         connex[i]=false;
     }
+    connex[sommet-1] = true;
     isConnexe_Aux(sommet,connex);
 
     bool found = false;
@@ -104,5 +107,59 @@ bool PrimM::isConnexe() {
         }
     }
     return !found;
+}
+
+ArbreRecouvr PrimM::algoPrim() {
+    ArbreRecouvr arbres[nbSommet];
+    bool tabUsed[nbSommet];
+    for (int i = 0; i < nbSommet; ++i) {
+        arbres[i].setSommet(i+1);
+        tabUsed[i] = false;
+    }
+    tabUsed[sommet-1] = true;
+
+
+    algoPrim_Aux(tabUsed,arbres);
+
+    return arbres[sommet-1];
+}
+
+void PrimM::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
+    int min = INT_MAX;
+    int sommetDep = 0;
+    int sommetArrive=0;
+    //recherche arrete
+    for (int i = 0; i < nbSommet; ++i) {
+        if(listeUsed[i] == true){
+            for (int j = 0; j < nbSommet; ++j) {
+                int cout = matriceAdjacence->get(i+1,j+1);
+                if(cout>0 && !listeUsed[j]){
+                    if(cout < min){
+                        min = cout;
+                        sommetDep = i+1;
+                        sommetArrive = j+1;
+                    }
+                }
+            }
+        }
+    }
+    //assignation nouvelle arrete
+    if (sommetDep!=0 && sommetArrive!=0){
+        listeAll[sommetDep-1].addFils(&listeAll[sommetArrive-1]);
+        listeUsed[sommetArrive-1] = true;
+    }
+
+    //continuation ou arret
+    bool found=false;
+    for (int i = 0; i < nbSommet; ++i) {
+        if(listeUsed[i] == false){
+            found = true;
+            break;
+        }
+    }
+
+    if(found){
+        algoPrim_Aux(listeUsed,listeAll);
+    }
 }
 

@@ -13,7 +13,9 @@ private:
     ArbreRecouvr *voisin;
 
 public:
+    ArbreRecouvr();
     ArbreRecouvr(int numSommet);
+    void setSommet(int s);
     void addFils(ArbreRecouvr *fils);
     void addVoisin(ArbreRecouvr *voisin);
 };

@@ -7,6 +7,7 @@
 
 #include <string>
 #include <fstream>
+#include "ArbreRecouvr.h"
 
 class PrimM {
 private:
@@ -32,6 +33,8 @@ private:
     void afficherResult();
     bool isConnexe();
     void isConnexe_Aux(int sommet,bool *connex);
+    ArbreRecouvr algoPrim();
+    void algoPrim_Aux(bool *listeUsed,ArbreRecouvr *listeAll);
 
 public:
     PrimM(std::string input, int sommet);
