@@ -32,7 +32,7 @@ private:
     int getCostFromTwoSommets(int, int);
 
     bool isFils2(ArbreRecouvr *, int);
-    void afficheArbre(ArbreRecouvr *);
+    void afficheArbre(ArbreRecouvr *, bool output = false);
 
 
 public:
