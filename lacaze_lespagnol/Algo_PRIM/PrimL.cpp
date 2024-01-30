@@ -90,14 +90,13 @@ void PrimL::afficherResult() {
             std::cout << "LE GRAPHE EST CONNEXE" << std::endl;
             ArbreRecouvr arbre = algoPrim();
             std::cout<< "le cout de l'arbre est " << this->totalCost <<std::endl;
-            std::cout << sommet << " -> _ : _" << std::endl;
+            afficheArbre(&arbre);
 
         }else{
             std::cout << "LE GRAPHE N'EST PAS CONNEXE" << std::endl;
             std::cout << "L'algorithme de Prim ne peux être réaliser" << std::endl;
         }
 
-        ///TODO faire + chaque sommet
     }else{
         ///TODO same mais avec this->output
     }
@@ -164,8 +163,60 @@ int PrimL::getCostFromTwoSommets(int s1, int s2) {
     while(tmp->getAdjacent()->getNumero() != s2){
         tmp = &tmp->getNext();
     }
-    
+
     return tmp->getCost();
+}
+
+bool PrimL::isFils2(ArbreRecouvr *pere, int num) {
+    bool found = false;
+    ArbreRecouvr *fils = pere->getFils();
+    while(fils != nullptr){
+        if (fils->getNumSommet() == num){
+            found = true;
+            break;
+        }
+        fils = fils->getVoisin();
+    }
+    return found;
+}
+
+void PrimL::afficheArbre(ArbreRecouvr *arbre) {
+    for (int i = 0; i < nb_sommet; ++i) {
+        if (arbre->getNumSommet() == i+1){
+            std::cout << arbre->getNumSommet() << " -> _ : _"<< std::endl;
+        }
+        else{
+
+            ArbreRecouvr *pere = arbre;
+            bool found = false;
+            ArbreRecouvr *grandPere = arbre;
+            while(true){
+                found = isFils2(pere,i+1);
+                if (found){
+                    std::cout << i+1 << " -> "<<pere->getNumSommet()<< " : "<<getCostFromTwoSommets(i+1,pere->getNumSommet())<< std::endl;
+                    break;
+                }
+                //Cas de la premiere iteration
+                if(pere->getNumSommet() == grandPere->getNumSommet()){
+                    pere = pere->getFils();
+                }
+
+                //Cas suivants
+                if(pere->getVoisin() == nullptr){
+                    if(grandPere->getVoisin() == nullptr){
+                        pere = grandPere->getFils()->getFils();
+                        grandPere = grandPere->getFils();
+                    }else{
+                        pere = grandPere->getVoisin()->getFils();
+                        grandPere = grandPere->getVoisin();
+                    }
+                }
+                else{
+                    pere = pere->getVoisin();
+                }
+            }
+        }
+    }
 }
 
 
