@@ -17,7 +17,7 @@ int PrimM::Matrice::get(int sommet1, int sommet2) {
     return this->matrice[(sommet1-1)+ nbSommet*(sommet2-1)];
 }
 
-int PrimM::Matrice::set(int sommet1, int sommet2, int value) {
+void PrimM::Matrice::set(int sommet1, int sommet2, int value) {
     matrice[(sommet1-1)+ nbSommet*(sommet2-1)] = value;
     matrice[(sommet2-1)+ nbSommet*(sommet1-1)] = value;
 }
