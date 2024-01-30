@@ -34,3 +34,15 @@ ArbreRecouvr::ArbreRecouvr() : numSommet(0),fils(nullptr), voisin(nullptr){
 
 }
 
+int ArbreRecouvr::getNumSommet() const {
+    return numSommet;
+}
+
+ArbreRecouvr *ArbreRecouvr::getFils() const {
+    return fils;
+}
+
+ArbreRecouvr *ArbreRecouvr::getVoisin() const {
+    return voisin;
+}
+

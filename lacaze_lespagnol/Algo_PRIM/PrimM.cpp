@@ -70,10 +70,14 @@ void PrimM::afficherResult() {
     if (this->afficheEcran){
         if(this->isConnexe()){
             std::cout << "le graphe est connexe" << std::endl;
+            ArbreRecouvr arbre = algoPrim();
+            std::cout<< "le cout de l'arbre est " << this->calculeCout(&arbre)<<std::endl;
+
         }else{
             std::cout << "le graphe n'est pas connexe" << std::endl;
+            std::cout << "l'algorithme de Prim ne peux être réaliser" << std::endl;
         }
-        ArbreRecouvr arbre = algoPrim();
+
         ///TODO faire arbre recouvrant, afficher cout arbre + chaque sommet
     }else{
         ///TODO same mais avec this->output
@@ -128,7 +132,7 @@ void PrimM::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
     int min = INT_MAX;
     int sommetDep = 0;
     int sommetArrive=0;
-    //recherche arrete
+    //recherche arete
     for (int i = 0; i < nbSommet; ++i) {
         if(listeUsed[i] == true){
             for (int j = 0; j < nbSommet; ++j) {
@@ -143,13 +147,13 @@ void PrimM::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
             }
         }
     }
-    //assignation nouvelle arrete
+    //assignation nouvelle aréte
     if (sommetDep!=0 && sommetArrive!=0){
         listeAll[sommetDep-1].addFils(&listeAll[sommetArrive-1]);
         listeUsed[sommetArrive-1] = true;
     }
 
-    //continuation ou arret
+    //continuation ou aréte
     bool found=false;
     for (int i = 0; i < nbSommet; ++i) {
         if(listeUsed[i] == false){
@@ -161,5 +165,17 @@ void PrimM::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
     if(found){
         algoPrim_Aux(listeUsed,listeAll);
     }
+}
+
+int PrimM::calculeCout(ArbreRecouvr *arbre) {
+    int acc=0;
+    int sommetCourant = arbre->getNumSommet();
+    ArbreRecouvr *voisin=arbre->getFils();
+    while(voisin != nullptr){
+        acc +=matriceAdjacence->get(sommetCourant,voisin->getNumSommet());
+        acc+= calculeCout(voisin);
+        voisin = voisin->getVoisin();
+    }
+    return acc;
 }
 

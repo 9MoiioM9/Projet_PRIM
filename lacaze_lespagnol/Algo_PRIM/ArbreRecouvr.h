@@ -18,6 +18,12 @@ public:
     void setSommet(int s);
     void addFils(ArbreRecouvr *fils);
     void addVoisin(ArbreRecouvr *voisin);
+
+    int getNumSommet() const;
+
+    ArbreRecouvr *getFils() const;
+
+    ArbreRecouvr *getVoisin() const;
 };
 
 

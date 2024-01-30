@@ -35,6 +35,7 @@ private:
     void isConnexe_Aux(int sommet,bool *connex);
     ArbreRecouvr algoPrim();
     void algoPrim_Aux(bool *listeUsed,ArbreRecouvr *listeAll);
+    int calculeCout(ArbreRecouvr *arbre);
 
 public:
     PrimM(std::string input, int sommet);
