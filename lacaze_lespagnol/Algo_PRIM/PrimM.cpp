@@ -78,7 +78,15 @@ void PrimM::afficherResult() {
             std::cout << "l'algorithme de Prim ne peux être réaliser" << std::endl;
         }
     }else{
-        ///TODO same mais avec this->output
+        if(this->isConnexe()){
+            output->write("LE GRAPHE EST CONNEXE\n",23);
+            ArbreRecouvr arbre = algoPrim();
+            output->write(("le cout de l'arbre est " + std::to_string(this->calculeCout(&arbre))+"\n").c_str(),25+(this->calculeCout(&arbre)/10));
+            afficheArbre(&arbre,true);
+        }else{
+            output->write("LE GRAPH N'EST PAS CONNEXE\n",27);
+            output->write("l'algorithme de Prim ne peux être réaliser\n",44);
+        }
     }
 }
 
@@ -177,10 +185,16 @@ int PrimM::calculeCout(ArbreRecouvr *arbre) {
     return acc;
 }
 
-void PrimM::afficheArbre(ArbreRecouvr *arbre) {
+void PrimM::afficheArbre(ArbreRecouvr *arbre,bool output) {
     for (int i = 0; i < nbSommet; ++i) {
         if (arbre->getNumSommet() == i+1){
-            std::cout << arbre->getNumSommet() << " -> _ : _"<< std::endl;
+            if(output){
+                this->output->write((std::to_string(arbre->getNumSommet()) + " -> _ : _\n").c_str(),arbre->getNumSommet()/10 + 11);
+            }
+            else{
+                std::cout << arbre->getNumSommet() << " -> _ : _"<< std::endl;
+            }
+
         }
         else{
 
@@ -190,9 +204,20 @@ void PrimM::afficheArbre(ArbreRecouvr *arbre) {
             while(true){
                 found = isFilsde(pere,i+1);
                 if (found){
-                    std::cout << i+1 << " -> "<<pere->getNumSommet()<< " : "<<matriceAdjacence->get(i+1,pere->getNumSommet())<< std::endl;
+                    if(output){
+                        this->output->write((std::to_string(i+1)+ " -> "+std::to_string(pere->getNumSommet())+ " : "+std::to_string(matriceAdjacence->get(i+1,pere->getNumSommet()))+"\n").c_str(),(i+1)/10 + pere->getNumSommet()/10 + matriceAdjacence->get(i+1,pere->getNumSommet())/10 +9);
+                    }
+                    else{
+                        std::cout << i+1 << " -> "<<pere->getNumSommet()<< " : "<<matriceAdjacence->get(i+1,pere->getNumSommet())<< std::endl;
+                    }
                     break;
                 }
+                //premiére itération
+                if(pere->getNumSommet() == grandPere->getNumSommet()){
+                    pere = pere->getFils();
+                }
+
+                //suite
                 if(pere->getVoisin() == nullptr){
                     if(grandPere->getVoisin() == nullptr){
                         pere = grandPere->getFils()->getFils();

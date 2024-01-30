@@ -36,7 +36,7 @@ private:
     ArbreRecouvr algoPrim();
     void algoPrim_Aux(bool *listeUsed,ArbreRecouvr *listeAll);
     int calculeCout(ArbreRecouvr *arbre);
-    void afficheArbre(ArbreRecouvr *arbre);
+    void afficheArbre(ArbreRecouvr *arbre,bool output = false);
     bool isFilsde(ArbreRecouvr *pere,int num);
 
 public:
