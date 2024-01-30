@@ -19,6 +19,8 @@ private:
     std::ofstream* output;
     std::ifstream* input;
 
+    int totalCost = 0;
+
     void addTwoSommets(int, int, int);
 
     void enregistrerListeAdjacence();
@@ -27,6 +29,7 @@ private:
     void isConnexe_Aux(int sommet,bool *connexe);
     ArbreRecouvr algoPrim();
     void algoPrim_Aux(bool *listeUsed,ArbreRecouvr *listeAll);
+    int getCostFromTwoSommets(int, int);
 
 public:
     PrimL(std::string input, int sommet);
