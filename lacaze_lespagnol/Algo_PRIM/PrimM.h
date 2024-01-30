@@ -18,7 +18,7 @@ private:
     public:
         Matrice(int nbSommet);
         int get(int sommet1,int sommet2);
-        int set(int sommet1,int sommet2, int value);
+        void set(int sommet1,int sommet2, int value);
     };
 
 
