@@ -85,7 +85,22 @@ bool PrimL::isConnexe() {
 }
 
 void PrimL::afficherResult() {
+    if (this->afficheEcran){
+        if(this->isConnexe()){
+            std::cout << "LE GRAPHE EST CONNEXE" << std::endl;
+            ArbreRecouvr arbre = algoPrim();
+            std::cout<< "le cout de l'arbre est " << this->totalCost <<std::endl;
+            std::cout << sommet << " -> _ : _" << std::endl;
 
+        }else{
+            std::cout << "LE GRAPHE N'EST PAS CONNEXE" << std::endl;
+            std::cout << "L'algorithme de Prim ne peux être réaliser" << std::endl;
+        }
+
+        ///TODO faire + chaque sommet
+    }else{
+        ///TODO same mais avec this->output
+    }
 }
 
 void PrimL::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
@@ -113,6 +128,7 @@ void PrimL::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
     if (sommetDep!=0 && sommetArrive!=0){
         listeAll[sommetDep-1].addFils(&listeAll[sommetArrive-1]);
         listeUsed[sommetArrive-1] = true;
+        totalCost += min;
     }
 
     //continuation ou arret
@@ -142,6 +158,16 @@ ArbreRecouvr PrimL::algoPrim() {
 
     return arbres[sommet-1];
 }
+
+int PrimL::getCostFromTwoSommets(int s1, int s2) {
+    Sommet::Couple *tmp = &liste_ajacentes[s1 - 1].getVoisins();
+    while(tmp->getAdjacent()->getNumero() != s2){
+        tmp = &tmp->getNext();
+    }
+    
+    return tmp->getCost();
+}
+
 
 
 
