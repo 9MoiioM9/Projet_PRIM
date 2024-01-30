@@ -88,3 +88,60 @@ void PrimL::afficherResult() {
 
 }
 
+void PrimL::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
+    int min = INT_MAX;
+    int sommetDep = 0;
+    int sommetArrive=0;
+    //recherche arete
+    for (int i = 0; i < nb_sommet; ++i) {
+        if(listeUsed[i]){
+            Sommet::Couple *tmp = &liste_ajacentes[i].getVoisins();
+            while(tmp != nullptr){
+                if(!listeUsed[tmp->getAdjacent()->getNumero() - 1]){
+                    if(tmp->getCost() < min){
+                        min = tmp->getCost();
+                        sommetDep = i+1;
+                        sommetArrive = tmp->getAdjacent()->getNumero();
+                    }
+                }
+                tmp = &tmp->getNext();
+            }
+        }
+    }
+
+    //assignation nouvelle arete
+    if (sommetDep!=0 && sommetArrive!=0){
+        listeAll[sommetDep-1].addFils(&listeAll[sommetArrive-1]);
+        listeUsed[sommetArrive-1] = true;
+    }
+
+    //continuation ou arret
+    bool found=false;
+    for (int i = 0; i < nb_sommet; ++i) {
+        if(!listeUsed[i]){
+            found = true;
+            break;
+        }
+    }
+
+    if(found){
+        algoPrim_Aux(listeUsed,listeAll);
+    }
+}
+
+ArbreRecouvr PrimL::algoPrim() {
+    ArbreRecouvr arbres[this->nb_sommet];
+    bool tabUsed[this->nb_sommet];
+    for (int i = 0; i < this->nb_sommet; ++i) {
+        arbres[i].setSommet(i+1);
+        tabUsed[i] = false;
+    }
+    tabUsed[sommet-1] = true;
+
+    algoPrim_Aux(tabUsed,arbres);
+
+    return arbres[sommet-1];
+}
+
+
+
