@@ -69,16 +69,14 @@ void PrimM::enregistrerMatrice() {
 void PrimM::afficherResult() {
     if (this->afficheEcran){
         if(this->isConnexe()){
-            std::cout << "le graphe est connexe" << std::endl;
+            std::cout << "LE GRAPHE EST CONNEXE" << std::endl;
             ArbreRecouvr arbre = algoPrim();
             std::cout<< "le cout de l'arbre est " << this->calculeCout(&arbre)<<std::endl;
-
+            afficheArbre(&arbre);
         }else{
-            std::cout << "le graphe n'est pas connexe" << std::endl;
+            std::cout << "LE GRAPH N'EST PAS CONNEXE" << std::endl;
             std::cout << "l'algorithme de Prim ne peux être réaliser" << std::endl;
         }
-
-        ///TODO faire arbre recouvrant, afficher cout arbre + chaque sommet
     }else{
         ///TODO same mais avec this->output
     }
@@ -177,5 +175,51 @@ int PrimM::calculeCout(ArbreRecouvr *arbre) {
         voisin = voisin->getVoisin();
     }
     return acc;
+}
+
+void PrimM::afficheArbre(ArbreRecouvr *arbre) {
+    for (int i = 0; i < nbSommet; ++i) {
+        if (arbre->getNumSommet() == i+1){
+            std::cout << arbre->getNumSommet() << " -> _ : _"<< std::endl;
+        }
+        else{
+
+            ArbreRecouvr *pere = arbre;
+            bool found = isFilsde(pere,i+1);
+            ArbreRecouvr *grandPere = arbre;
+            while(true){
+                found = isFilsde(pere,i+1);
+                if (found){
+                    std::cout << i+1 << " -> "<<pere->getNumSommet()<< " : "<<matriceAdjacence->get(i+1,pere->getNumSommet())<< std::endl;
+                    break;
+                }
+                if(pere->getVoisin() == nullptr){
+                    if(grandPere->getVoisin() == nullptr){
+                        pere = grandPere->getFils()->getFils();
+                        grandPere = grandPere->getFils();
+                    }else{
+                        pere = grandPere->getVoisin()->getFils();
+                        grandPere = grandPere->getVoisin();
+                    }
+                }
+                else{
+                    pere = pere->getVoisin();
+                }
+            }
+        }
+    }
+}
+
+bool PrimM::isFilsde(ArbreRecouvr *pere, int num) {
+    bool found = false;
+    ArbreRecouvr *fils = pere->getFils();
+    while(fils != nullptr){
+        if (fils->getNumSommet() == num){
+            found = true;
+            break;
+        }
+        fils = fils->getVoisin();
+    }
+    return found;
 }
 
