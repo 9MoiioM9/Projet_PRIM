@@ -90,16 +90,23 @@ void PrimL::afficherResult() {
             std::cout << "LE GRAPHE EST CONNEXE" << std::endl;
             ArbreRecouvr arbre = algoPrim();
             std::cout<< "le cout de l'arbre est " << this->totalCost <<std::endl;
-            std::cout << sommet << " -> _ : _" << std::endl;
+            afficheArbre(&arbre);
 
         }else{
             std::cout << "LE GRAPHE N'EST PAS CONNEXE" << std::endl;
             std::cout << "L'algorithme de Prim ne peux être réaliser" << std::endl;
         }
 
-        ///TODO faire + chaque sommet
     }else{
-        ///TODO same mais avec this->output
+        if(this->isConnexe()){
+            output->write("LE GRAPHE EST CONNEXE\n",23);
+            ArbreRecouvr arbre = algoPrim();
+            output->write(("le cout de l'arbre est " + std::to_string(this->totalCost)+"\n").c_str(),25+(this->totalCost/10));
+            afficheArbre(&arbre,true);
+        }else{
+            output->write("LE GRAPH N'EST PAS CONNEXE\n",27);
+            output->write("l'algorithme de Prim ne peux être réaliser\n",44);
+        }
     }
 }
 
@@ -164,8 +171,70 @@ int PrimL::getCostFromTwoSommets(int s1, int s2) {
     while(tmp->getAdjacent()->getNumero() != s2){
         tmp = &tmp->getNext();
     }
-    
+
     return tmp->getCost();
+}
+
+bool PrimL::isFils2(ArbreRecouvr *pere, int num) {
+    bool found = false;
+    ArbreRecouvr *fils = pere->getFils();
+    while(fils != nullptr){
+        if (fils->getNumSommet() == num){
+            found = true;
+            break;
+        }
+        fils = fils->getVoisin();
+    }
+    return found;
+}
+
+void PrimL::afficheArbre(ArbreRecouvr *arbre, bool output) {
+    for (int i = 0; i < nb_sommet; ++i) {
+        if (arbre->getNumSommet() == i+1){
+            if(output){
+                this->output->write((std::to_string(arbre->getNumSommet()) + " -> _ : _\n").c_str(),arbre->getNumSommet()/10 + 11);
+            }
+            else{
+                std::cout << arbre->getNumSommet() << " -> _ : _"<< std::endl;
+            }
+        }
+        else{
+
+            ArbreRecouvr *pere = arbre;
+            bool found = false;
+            ArbreRecouvr *grandPere = arbre;
+            while(true){
+                found = isFils2(pere,i+1);
+                if (found){
+                    if(output){
+                        this->output->write((std::to_string(i+1)+ " -> "+std::to_string(pere->getNumSommet())+ " : "+std::to_string(getCostFromTwoSommets(i+1,pere->getNumSommet()))+"\n").c_str(),(i+1)/10 + pere->getNumSommet()/10 + getCostFromTwoSommets(i+1,pere->getNumSommet())/10 +9);
+                    }
+                    else{
+                        std::cout << i+1 << " -> "<<pere->getNumSommet()<< " : "<<getCostFromTwoSommets(i+1,pere->getNumSommet())<< std::endl;
+                    }
+                    break;
+                }
+                //Cas de la premiere iteration
+                if(pere->getNumSommet() == grandPere->getNumSommet()){
+                    pere = pere->getFils();
+                }
+
+                //Cas suivants
+                if(pere->getVoisin() == nullptr){
+                    if(grandPere->getVoisin() == nullptr){
+                        pere = grandPere->getFils()->getFils();
+                        grandPere = grandPere->getFils();
+                    }else{
+                        pere = grandPere->getVoisin()->getFils();
+                        grandPere = grandPere->getVoisin();
+                    }
+                }
+                else{
+                    pere = pere->getVoisin();
+                }
+            }
+        }
+    }
 }
 
 

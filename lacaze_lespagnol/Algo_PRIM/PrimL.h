@@ -31,6 +31,10 @@ private:
     void algoPrim_Aux(bool *listeUsed,ArbreRecouvr *listeAll);
     int getCostFromTwoSommets(int, int);
 
+    bool isFils2(ArbreRecouvr *, int);
+    void afficheArbre(ArbreRecouvr *, bool output = false);
+
+
 public:
     PrimL(std::string input, int sommet);
     PrimL(std::string input, int sommet,std::string output);
