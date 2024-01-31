@@ -28,6 +28,9 @@ private:
     std::ofstream* output;
     std::ifstream* input;
     int nbSommet;
+    ArbreRecouvr *arbres;
+
+    int totalCost = 0;
 
     void enregistrerMatrice();
     void afficherResult();
@@ -35,9 +38,9 @@ private:
     void isConnexe_Aux(int sommet,bool *connex);
     ArbreRecouvr algoPrim();
     void algoPrim_Aux(bool *listeUsed,ArbreRecouvr *listeAll);
-    int calculeCout(ArbreRecouvr *arbre);
     void afficheArbre(ArbreRecouvr *arbre,bool output = false);
     bool isFilsde(ArbreRecouvr *pere,int num);
+    bool afficheArbre_Aux(ArbreRecouvr *arbre,int num);
 
 public:
     PrimM(std::string input, int sommet);

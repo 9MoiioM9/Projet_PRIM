@@ -34,7 +34,7 @@ private:
 
     bool isFils2(ArbreRecouvr *, int);
     void afficheArbre(ArbreRecouvr *, bool output = false);
-
+    bool afficheArbre_Aux(ArbreRecouvr *arbre,int num);
 
 public:
     PrimL(std::string input, int sommet);

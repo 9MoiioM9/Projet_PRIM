@@ -1,0 +1,11 @@
+LE GRAPHE EST CONNEXE
+le cout de l'arbre est 45
+1 -> 3 : 7
+2 -> 1 : 2
+3 -> 4 : 2
+4 -> _ : _
+5 -> 2 : 4
+6 -> 5 : 15
+7 -> 8 : 5
+8 -> 4 : 10
+Temps de l'algorithme de Prim :0 ms

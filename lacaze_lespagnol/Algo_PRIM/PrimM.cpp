@@ -3,8 +3,11 @@
 //
 
 #include <iostream>
+#include <chrono>
 #include "PrimM.h"
 #include "ArbreRecouvr.h"
+
+using namespace std::literals;
 
 PrimM::Matrice::Matrice(int nbSommet) : nbSommet(nbSommet){
     this->matrice = new int[nbSommet*nbSommet];
@@ -36,11 +39,15 @@ PrimM::PrimM(std::string input, int sommet) : sommet(sommet), nbSommet(0), affic
 
 
 
-PrimM::PrimM(std::string input, int sommet, std::string output) : sommet(sommet), nbSommet(0), afficheEcran(false){
-    this->input = new std::ifstream(input);
+PrimM::PrimM(std::string input, int sommet, std::string outputS) : sommet(sommet), nbSommet(0), afficheEcran(false){
+    this->input = new std::ifstream();
     this->input->open(input);
-    this->output = new std::ofstream(output);
-    this->output->open(output);
+    if(!this->input->is_open() && !this->output->is_open()){
+        std::cout << "erreur a l'ouverture du fichier" << std::endl;
+        return;
+    }
+    this->output = new std::ofstream();
+    this->output->open(outputS);
     if(!this->input->is_open() && !this->output->is_open()){
         std::cout << "erreur a l'ouverture du fichier" << std::endl;
         return;
@@ -79,22 +86,28 @@ void PrimM::afficherResult() {
     if (this->afficheEcran){
         if(this->isConnexe()){
             std::cout << "LE GRAPHE EST CONNEXE" << std::endl;
+            std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
             ArbreRecouvr arbre = algoPrim();
-            std::cout<< "le cout de l'arbre est " << this->calculeCout(&arbre)<<std::endl;
+            std::chrono::time_point<std::chrono::steady_clock> end = std::chrono::steady_clock::now();
+            std::cout<< "le cout de l'arbre est " << this->totalCost<<std::endl;
             afficheArbre(&arbre);
+            std::cout<< "Temps de l'algorithme de Prim :" << (end - start) / 1ms << " ms" <<std::endl;
         }else{
             std::cout << "LE GRAPH N'EST PAS CONNEXE" << std::endl;
             std::cout << "l'algorithme de Prim ne peux être réaliser" << std::endl;
         }
     }else{
         if(this->isConnexe()){
-            output->write("LE GRAPHE EST CONNEXE\n",23);
+            *output << "LE GRAPHE EST CONNEXE" <<std::endl;
+            std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
             ArbreRecouvr arbre = algoPrim();
-            output->write(("le cout de l'arbre est " + std::to_string(this->calculeCout(&arbre))+"\n").c_str(),25+(this->calculeCout(&arbre)/10));
+            std::chrono::time_point<std::chrono::steady_clock> end = std::chrono::steady_clock::now();
+            *output << "le cout de l'arbre est " + std::to_string(this->totalCost) <<std::endl;
             afficheArbre(&arbre,true);
+            *output << "Temps de l'algorithme de Prim :" + std::to_string((end - start) / 1ms)+" ms" <<std::endl;
         }else{
-            output->write("LE GRAPH N'EST PAS CONNEXE\n",27);
-            output->write("l'algorithme de Prim ne peux être réaliser\n",44);
+            *output << "LE GRAPH N'EST PAS CONNEXE"<<std::endl;
+            *output << "l'algorithme de Prim ne peux être réaliser"<<std::endl;
         }
     }
 }
@@ -129,8 +142,8 @@ bool PrimM::isConnexe() {
 }
 
 ArbreRecouvr PrimM::algoPrim() {
-    ArbreRecouvr arbres[nbSommet];
-    bool tabUsed[nbSommet];
+    arbres = new ArbreRecouvr[this->nbSommet];
+    bool tabUsed[this->nbSommet];
     for (int i = 0; i < nbSommet; ++i) {
         arbres[i].setSommet(i+1);
         tabUsed[i] = false;
@@ -149,7 +162,7 @@ void PrimM::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
     int sommetArrive=0;
     //recherche arete
     for (int i = 0; i < nbSommet; ++i) {
-        if(listeUsed[i] == true){
+        if(listeUsed[i]){
             for (int j = 0; j < nbSommet; ++j) {
                 int cout = matriceAdjacence->get(i+1,j+1);
                 if(cout>0 && !listeUsed[j]){
@@ -166,12 +179,13 @@ void PrimM::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
     if (sommetDep!=0 && sommetArrive!=0){
         listeAll[sommetDep-1].addFils(&listeAll[sommetArrive-1]);
         listeUsed[sommetArrive-1] = true;
+        totalCost += min;
     }
 
     //continuation ou aréte
     bool found=false;
     for (int i = 0; i < nbSommet; ++i) {
-        if(listeUsed[i] == false){
+        if(!listeUsed[i]){
             found = true;
             break;
         }
@@ -182,64 +196,19 @@ void PrimM::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
     }
 }
 
-int PrimM::calculeCout(ArbreRecouvr *arbre) {
-    int acc=0;
-    int sommetCourant = arbre->getNumSommet();
-    ArbreRecouvr *voisin=arbre->getFils();
-    while(voisin != nullptr){
-        acc +=matriceAdjacence->get(sommetCourant,voisin->getNumSommet());
-        acc+= calculeCout(voisin);
-        voisin = voisin->getVoisin();
-    }
-    return acc;
-}
-
 void PrimM::afficheArbre(ArbreRecouvr *arbre,bool output) {
     for (int i = 0; i < nbSommet; ++i) {
         if (arbre->getNumSommet() == i+1){
             if(output){
-                this->output->write((std::to_string(arbre->getNumSommet()) + " -> _ : _\n").c_str(),arbre->getNumSommet()/10 + 11);
+                *this->output <<std::to_string(arbre->getNumSommet()) + " -> _ : _" <<std::endl;
             }
             else{
                 std::cout << arbre->getNumSommet() << " -> _ : _"<< std::endl;
             }
 
         }
-        else{
-
-            ArbreRecouvr *pere = arbre;
-            bool found = isFilsde(pere,i+1);
-            ArbreRecouvr *grandPere = arbre;
-            while(true){
-                found = isFilsde(pere,i+1);
-                if (found){
-                    if(output){
-                        this->output->write((std::to_string(i+1)+ " -> "+std::to_string(pere->getNumSommet())+ " : "+std::to_string(matriceAdjacence->get(i+1,pere->getNumSommet()))+"\n").c_str(),(i+1)/10 + pere->getNumSommet()/10 + matriceAdjacence->get(i+1,pere->getNumSommet())/10 +9);
-                    }
-                    else{
-                        std::cout << i+1 << " -> "<<pere->getNumSommet()<< " : "<<matriceAdjacence->get(i+1,pere->getNumSommet())<< std::endl;
-                    }
-                    break;
-                }
-                //premiére itération
-                if(pere->getNumSommet() == grandPere->getNumSommet()){
-                    pere = pere->getFils();
-                }
-
-                //suite
-                if(pere->getVoisin() == nullptr){
-                    if(grandPere->getVoisin() == nullptr){
-                        pere = grandPere->getFils()->getFils();
-                        grandPere = grandPere->getFils();
-                    }else{
-                        pere = grandPere->getVoisin()->getFils();
-                        grandPere = grandPere->getVoisin();
-                    }
-                }
-                else{
-                    pere = pere->getVoisin();
-                }
-            }
+        else {
+            afficheArbre_Aux(arbre, i + 1);
         }
     }
 }
@@ -257,3 +226,31 @@ bool PrimM::isFilsde(ArbreRecouvr *pere, int num) {
     return found;
 }
 
+bool PrimM::afficheArbre_Aux(ArbreRecouvr *arbre,int num){
+    if(arbre == nullptr){
+        return false;
+    }
+    if(isFilsde(arbre,num)){
+        if(output){
+            *this->output << std::to_string(num)+ " -> "+std::to_string(arbre->getNumSommet())+ " : "+std::to_string(matriceAdjacence->get(num,arbre->getNumSommet())) << std::endl;
+        }
+        else{
+            std::cout << num << " -> "<<arbre->getNumSommet()<< " : "<<matriceAdjacence->get(num,arbre->getNumSommet())<< std::endl;
+        }
+        return true;
+    }else{
+        bool found =false;
+        if(arbre->getFils() == nullptr){
+            return false;
+        }
+        ArbreRecouvr *fils = arbre->getFils();
+        while(!found){
+            found = afficheArbre_Aux(fils,num);
+            if(fils->getVoisin()== nullptr){
+                return false;
+            }
+            fils = fils->getVoisin();
+        }
+        return true;
+    }
+}

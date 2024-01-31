@@ -4,9 +4,11 @@
 
 #include "PrimL.h"
 #include <iostream>
+#include <chrono>
 
+using namespace std::literals;
 PrimL::PrimL(std::string input, int sommet)
-: sommet(sommet), nb_sommet(0), afficheEcran(false), output(nullptr){
+: sommet(sommet), nb_sommet(0), afficheEcran(true), output(nullptr){
     this->input = new std::ifstream();
     this->input->open(input);
     if(!this->input->is_open()){
@@ -16,12 +18,16 @@ PrimL::PrimL(std::string input, int sommet)
     this->enregistrerListeAdjacence();
 }
 
-PrimL::PrimL(std::string input, int sommet, std::string output)
+PrimL::PrimL(std::string input, int sommet, std::string outputS)
 : sommet(sommet), nb_sommet(0), afficheEcran(false) {
-    this->input = new std::ifstream(input);
+    this->input = new std::ifstream();
     this->input->open(input);
-    this->output = new std::ofstream(output);
-    this->output->open(output);
+    if(!this->input->is_open()){
+        std::cout << "erreur a l'ouverture du fichier" << std::endl;
+        return;
+    }
+    this->output = new std::ofstream();
+    this->output->open(outputS);
     if(!this->input->is_open() && !this->output->is_open()){
         std::cout << "erreur a l'ouverture du fichier" << std::endl;
         return;
@@ -97,13 +103,15 @@ bool PrimL::isConnexe() {
 }
 
 void PrimL::afficherResult() {
-    if (!this->afficheEcran){
+    if (this->afficheEcran){
         if(this->isConnexe()){
             std::cout << "LE GRAPHE EST CONNEXE" << std::endl;
+            std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
             ArbreRecouvr arbre = algoPrim();
+            std::chrono::time_point<std::chrono::steady_clock> end = std::chrono::steady_clock::now();
             std::cout<< "le cout de l'arbre est " << this->totalCost <<std::endl;
             afficheArbre(&arbre);
-
+            std::cout<< "Temps de l'algorithme de Prim :" << (end - start) / 1ms << " ms" <<std::endl;
         }else{
             std::cout << "LE GRAPHE N'EST PAS CONNEXE" << std::endl;
             std::cout << "L'algorithme de Prim ne peux être réaliser" << std::endl;
@@ -111,13 +119,16 @@ void PrimL::afficherResult() {
 
     }else{
         if(this->isConnexe()){
-            output->write("LE GRAPHE EST CONNEXE\n",23);
+            *output << "LE GRAPHE EST CONNEXE" <<std::endl;
+            std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
             ArbreRecouvr arbre = algoPrim();
-            output->write(("le cout de l'arbre est " + std::to_string(this->totalCost)+"\n").c_str(),25+(this->totalCost/10));
+            std::chrono::time_point<std::chrono::steady_clock> end = std::chrono::steady_clock::now();
+            *output << "le cout de l'arbre est " + std::to_string(this->totalCost) <<std::endl;
             afficheArbre(&arbre,true);
+            *output << "Temps de l'algorithme de Prim :" + std::to_string((end - start) / 1ms)+" ms" <<std::endl;
         }else{
-            output->write("LE GRAPH N'EST PAS CONNEXE\n",27);
-            output->write("l'algorithme de Prim ne peux être réaliser\n",44);
+            *output << "LE GRAPH N'EST PAS CONNEXE"<<std::endl;
+            *output << "l'algorithme de Prim ne peux être réaliser"<<std::endl;
         }
     }
 }
@@ -206,51 +217,46 @@ void PrimL::afficheArbre(ArbreRecouvr *arbre, bool output) {
     for (int i = 0; i < nb_sommet; ++i) {
         if (arbre->getNumSommet() == i+1){
             if(output){
-                this->output->write((std::to_string(arbre->getNumSommet()) + " -> _ : _\n").c_str(),arbre->getNumSommet()/10 + 11);
+                *this->output << std::to_string(arbre->getNumSommet()) + " -> _ : _"<<std::endl;
             }
             else{
                 std::cout << arbre->getNumSommet() << " -> _ : _"<< std::endl;
             }
         }
         else{
-
-            ArbreRecouvr *pere = arbre;
-            bool found = false;
-            ArbreRecouvr *grandPere = arbre;
-            while(true){
-                found = isFils2(pere,i+1);
-                if (found){
-                    if(output){
-                        this->output->write((std::to_string(i+1)+ " -> "+std::to_string(pere->getNumSommet())+ " : "+std::to_string(getCostFromTwoSommets(i+1,pere->getNumSommet()))+"\n").c_str(),(i+1)/10 + pere->getNumSommet()/10 + getCostFromTwoSommets(i+1,pere->getNumSommet())/10 +9);
-                    }
-                    else{
-                        std::cout << i+1 << " -> "<<pere->getNumSommet()<< " : "<<getCostFromTwoSommets(i+1,pere->getNumSommet())<< std::endl;
-                    }
-                    break;
-                }
-                //Cas de la premiere iteration
-                if(pere->getNumSommet() == grandPere->getNumSommet()){
-                    pere = pere->getFils();
-                }
-
-                //Cas suivants
-                if(pere->getVoisin() == nullptr){
-                    if(grandPere->getVoisin() == nullptr){
-                        pere = grandPere->getFils()->getFils();
-                        grandPere = grandPere->getFils();
-                    }else{
-                        pere = grandPere->getVoisin()->getFils();
-                        grandPere = grandPere->getVoisin();
-                    }
-                }
-                else{
-                    pere = pere->getVoisin();
-                }
-            }
+            afficheArbre_Aux(arbre,i+1);
         }
     }
 }
 
 
+bool PrimL::afficheArbre_Aux(ArbreRecouvr *arbre,int num){
+    if(arbre == nullptr){
+        return false;
+    }
+    if(isFils2(arbre,num)){
+        if(output){
+            *this->output << std::to_string(num)+ " -> "+std::to_string(arbre->getNumSommet())+ " : "+std::to_string(getCostFromTwoSommets(num,arbre->getNumSommet()))<<std::endl;
+        }
+        else{
+            std::cout << num << " -> "<<arbre->getNumSommet()<< " : "<<getCostFromTwoSommets(num,arbre->getNumSommet())<< std::endl;
+        }
+        return true;
+    }else{
+        bool found =false;
+        if(arbre->getFils() == nullptr){
+            return false;
+        }
+        ArbreRecouvr *fils = arbre->getFils();
+        while(!found){
+            found = afficheArbre_Aux(fils,num);
+            if(fils->getVoisin()== nullptr){
+                return false;
+            }
+            fils = fils->getVoisin();
+        }
+        return true;
+    }
+}
 
 
