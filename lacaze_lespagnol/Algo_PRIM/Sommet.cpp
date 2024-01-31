@@ -47,3 +47,12 @@ void Sommet::setNumero(int num) {
 Sommet::~Sommet() {
     delete voisins;
 }
+
+void Sommet::addVoisin(Sommet *s, int cost) {
+    if(this->voisins == nullptr){
+        this->voisins = new Couple(s,cost);
+    }
+    else{
+        this->getVoisins().addSommet(s,cost);
+    }
+}

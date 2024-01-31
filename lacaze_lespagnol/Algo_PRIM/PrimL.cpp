@@ -9,6 +9,10 @@ PrimL::PrimL(std::string input, int sommet)
 : sommet(sommet), nb_sommet(0), afficheEcran(false), output(nullptr){
     this->input = new std::ifstream();
     this->input->open(input);
+    if(!this->input->is_open()){
+        std::cout << "erreur a l'ouverture du fichier" << std::endl;
+        return;
+    }
     this->enregistrerListeAdjacence();
 }
 
@@ -18,19 +22,23 @@ PrimL::PrimL(std::string input, int sommet, std::string output)
     this->input->open(input);
     this->output = new std::ofstream(output);
     this->output->open(output);
+    if(!this->input->is_open() && !this->output->is_open()){
+        std::cout << "erreur a l'ouverture du fichier" << std::endl;
+        return;
+    }
     this->enregistrerListeAdjacence();
 }
 
 void PrimL::addTwoSommets(int s1, int s2, int cost) {
-    liste_ajacentes[s1 -1].getVoisins().addSommet(&liste_ajacentes[s2-1], cost);
-    liste_ajacentes[s2 -1].getVoisins().addSommet(&liste_ajacentes[s1-1], cost);
+    liste_ajacentes[s1 -1].addVoisin(&liste_ajacentes[s2-1], cost);
+    liste_ajacentes[s2 -1].addVoisin(&liste_ajacentes[s1-1], cost);
 }
 
 void PrimL::enregistrerListeAdjacence() {
     char* nb;
-    input->getline(nb, INT_MAX, ' ');
-    this->nb_sommet = std::stoi(nb);
-    liste_ajacentes = new Sommet(nb_sommet);
+    *input >> nb;
+    char * ptr;
+    this->nb_sommet = strtol(nb,&ptr,10);
 
     liste_ajacentes = new Sommet[nb_sommet];
 
@@ -39,14 +47,15 @@ void PrimL::enregistrerListeAdjacence() {
     }
 
     for(int i = 0; i<nb_sommet; i++){
-        input->getline(nb, INT_MAX, ' ');
+        *input >> nb;
         while(true){
-            input->getline(nb, INT_MAX, ' ');
-            if(*nb == '0'){
+            *input >> nb;
+            std::string nombre =nb;
+            if(nombre == "0"){
                 break;
             }else {
                 int s = std::stoi(nb);
-                input->getline(nb, INT_MAX, ' ');
+                *input >> nb;
                 int cost = std::stoi(nb);
                 this->addTwoSommets(i+1, s, cost);
             }
@@ -59,9 +68,12 @@ void PrimL::enregistrerListeAdjacence() {
 void PrimL::isConnexe_Aux(int sommet, bool *connexe) {
     //On récupère le numéro du premier adjacent
     Sommet::Couple *v = &liste_ajacentes[sommet-1].getVoisins();
-    while(v != nullptr){
-        connexe[v->getAdjacent()->getNumero()-1] = true;
-        isConnexe_Aux(v->getAdjacent()->getNumero()-1, connexe);
+    while(v!= nullptr && v->getAdjacent() != nullptr){
+        if (!connexe[v->getAdjacent()->getNumero() - 1]){
+            connexe[v->getAdjacent()->getNumero()-1] = true;
+            isConnexe_Aux(v->getAdjacent()->getNumero(), connexe);
+        }
+
         v = &v->getNext();
     }
 }
@@ -85,7 +97,7 @@ bool PrimL::isConnexe() {
 }
 
 void PrimL::afficherResult() {
-    if (this->afficheEcran){
+    if (!this->afficheEcran){
         if(this->isConnexe()){
             std::cout << "LE GRAPHE EST CONNEXE" << std::endl;
             ArbreRecouvr arbre = algoPrim();
@@ -153,7 +165,7 @@ void PrimL::algoPrim_Aux(bool *listeUsed, ArbreRecouvr *listeAll) {
 }
 
 ArbreRecouvr PrimL::algoPrim() {
-    ArbreRecouvr arbres[this->nb_sommet];
+    arbres = new ArbreRecouvr[this->nb_sommet];
     bool tabUsed[this->nb_sommet];
     for (int i = 0; i < this->nb_sommet; ++i) {
         arbres[i].setSommet(i+1);
@@ -177,6 +189,8 @@ int PrimL::getCostFromTwoSommets(int s1, int s2) {
 
 bool PrimL::isFils2(ArbreRecouvr *pere, int num) {
     bool found = false;
+    if(pere== nullptr)
+        return false;
     ArbreRecouvr *fils = pere->getFils();
     while(fils != nullptr){
         if (fils->getNumSommet() == num){

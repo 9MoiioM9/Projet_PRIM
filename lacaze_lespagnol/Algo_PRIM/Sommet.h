@@ -22,11 +22,12 @@ public:
 
         ~Couple();
     };
-    Sommet() {};
+    Sommet() :numero(0), voisins(nullptr){};
     Sommet(int num) : numero(num), voisins(nullptr) {};
     int getNumero() const;
     void setNumero(int);
     Couple& getVoisins();
+    void addVoisin(Sommet*,int);
 
     ~Sommet();
 

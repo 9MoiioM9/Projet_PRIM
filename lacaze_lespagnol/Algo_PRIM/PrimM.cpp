@@ -27,6 +27,10 @@ PrimM::PrimM(std::string input, int sommet) : sommet(sommet), nbSommet(0), affic
         nullptr){
     this->input = new std::ifstream();
     this->input->open(input);
+    if(!this->input->is_open()){
+        std::cout << "erreur a l'ouverture du fichier" << std::endl;
+        return;
+    }
     this->enregistrerMatrice();
 }
 
@@ -37,26 +41,31 @@ PrimM::PrimM(std::string input, int sommet, std::string output) : sommet(sommet)
     this->input->open(input);
     this->output = new std::ofstream(output);
     this->output->open(output);
+    if(!this->input->is_open() && !this->output->is_open()){
+        std::cout << "erreur a l'ouverture du fichier" << std::endl;
+        return;
+    }
     this->enregistrerMatrice();
 }
 
 void PrimM::enregistrerMatrice() {
     char* nombre;
-    input->getline(nombre,INT_MAX,' ');
-    this->nbSommet = std::stoi(nombre);
+    *input >> nombre;
+    char *ptr;
+    this->nbSommet = strtol(nombre,&ptr,10);
     matriceAdjacence = new Matrice(nbSommet);
 
     //remplir la matrice
     for (int i = 0; i < nbSommet; ++i) {
-        input->getline(nombre,INT_MAX,' ');
+        *input >> nombre;
         while(true){
-            input->getline(nombre,INT_MAX,' ');
+            *input >> nombre;
             if (*nombre == '0'){
                 break;
             }
             else{
                 int sommet = std::stoi(nombre);
-                input->getline(nombre,INT_MAX,' ');
+                *input >> nombre;
                 int poids = std::stoi(nombre);
                 this->matriceAdjacence->set(i+1,sommet,poids);
             }

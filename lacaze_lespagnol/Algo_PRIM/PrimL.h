@@ -18,6 +18,7 @@ private:
     bool afficheEcran;
     std::ofstream* output;
     std::ifstream* input;
+    ArbreRecouvr *arbres;
 
     int totalCost = 0;
 
